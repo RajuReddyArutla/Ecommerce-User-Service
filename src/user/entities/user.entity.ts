@@ -26,31 +26,79 @@
 
 
 
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+// import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+// import { Address } from './address.entity';
+
+// @Entity('users')
+// export class User {
+//   @PrimaryGeneratedColumn() // ✅ This generates integer IDs
+//   id: number; // ✅ MUST be number, not string
+
+//   @Column()
+//   firstName: string;
+
+//   @Column()
+//   lastName: string;
+
+//   @Column({ unique: true })
+//   email: string;
+
+//   @Column({ select: false })
+//   password: string;
+
+//   @Column({ nullable: true })
+//   refreshToken: string;
+
+//   @Column({ default: 'user' })
+//   role: string;
+
+//   @Column({ nullable: true })
+//   googleId: string;
+
+//   @Column({ default: false })
+//   isGoogleUser: boolean;
+
+//   @OneToMany(() => Address, address => address.user)
+//   addresses: Address[];
+// }
+
+
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Address } from './address.entity';
+
+// ✅ Role Enum - Shared across services
+export enum UserRole {
+  ADMIN = 'admin',
+  CUSTOMER = 'customer',
+}
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn() // ✅ This generates integer IDs
-  id: number; // ✅ MUST be number, not string
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column()
+  @Column({ length: 100 })
   firstName: string;
 
-  @Column()
+  @Column({ length: 100 })
   lastName: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 255 })
   email: string;
 
-  @Column({ select: false })
+  @Column({ select: false, nullable: true })
   password: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   refreshToken: string;
 
-  @Column({ default: 'user' })
-  role: string;
+  // ✅ UPDATED: Use enum instead of string
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.CUSTOMER,
+  })
+  role: UserRole;
 
   @Column({ nullable: true })
   googleId: string;
@@ -58,6 +106,18 @@ export class User {
   @Column({ default: false })
   isGoogleUser: boolean;
 
-  @OneToMany(() => Address, address => address.user)
+  // ✅ BEST PRACTICE: Add timestamps
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @OneToMany(() => Address, address => address.user, { cascade: true })
   addresses: Address[];
+
+  // ✅ BEST PRACTICE: Add computed property for full name
+  get fullName(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
 }

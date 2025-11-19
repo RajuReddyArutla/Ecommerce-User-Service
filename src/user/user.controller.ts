@@ -177,8 +177,8 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
-// Assuming DTOs are defined or imported elsewhere
-import { CreateUserDto } from './dto/create-address.dto'; 
+import { CreateUserDto } from './dto/create-user.dto';
+
 
 @Controller() // No prefix needed for microservices
 export class UserController { 
