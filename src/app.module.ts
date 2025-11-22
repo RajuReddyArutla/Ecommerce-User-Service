@@ -1,14 +1,3 @@
-// import { Module } from '@nestjs/common';
-// import { AppController } from './app.controller';
-// import { AppService } from './app.service';
-
-// @Module({
-//   imports: [],
-//   controllers: [AppController],
-//   providers: [AppService],
-// })
-// export class AppModule {}
-
 
 // src/app.module.ts (user-service)
 import { Module } from '@nestjs/common';
@@ -31,7 +20,8 @@ import { UserModule } from './user/user.module';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true, // Dev only
+        // synchronize: true, // Dev only
+        synchronize: configService.get('DB_SYNC', false),
       }),
     }),
     UserModule,
